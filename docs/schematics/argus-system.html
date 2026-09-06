@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Argus-Panoptes — Interactive Schematics</title>
+<style>
+:root{--bg:#0f1420;--card:#182132;--line:#2b3a55;--txt:#e8eef7;--mut:#9fb0c9;--acc:#5cc8ff;--warn:#ffb454;--ok:#7dffa8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.5 system-ui,Segoe UI,Roboto,Arial}
+header{padding:18px 22px;border-bottom:1px solid var(--line)}
+header h1{margin:0;font-size:20px}header p{margin:4px 0 0;color:var(--mut)}
+nav{display:flex;gap:8px;padding:12px 22px;flex-wrap:wrap}
+nav button{background:var(--card);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer}
+nav button.active{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+main{padding:0 22px 30px}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:12px 0}
+.tab{display:none}.tab.active{display:block}
+svg{width:100%;height:auto;background:#0b1120;border:1px solid var(--line);border-radius:10px}
+.lbl{font:12px system-ui;fill:#e8eef7}.mut{font:11px system-ui;fill:#9fb0c9}.pin{font:11px monospace;fill:#5cc8ff}
+.wire{stroke:#5cc8ff;stroke-width:2;fill:none}.pwr{stroke:#ff7a7a;stroke-width:2.5;fill:none}.gnd{stroke:#7dffa8;stroke-width:2.5;fill:none}
+.box{fill:#141d31;stroke:#2b3a55}.chip{fill:#10182b;stroke:#5cc8ff}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{border:1px solid var(--line);padding:6px 8px;text-align:left}
+th{background:#10182b}input[type=range]{width:220px}code{background:#0b1120;padding:1px 6px;border-radius:6px;border:1px solid var(--line)}
+.foot{color:var(--mut);font-size:12px}
+</style>
+</head>
+<body>
+<header>
+<h1>Argus-Panoptes — ACOUSTICS BASED NDT: Interactive Schematics</h1>
+<p>Assumption locked: <b>ESP32-DevKitC V4 38-pin + classic 5V HC-SR04</b> · Firmware pins TRIG 25/26/27/14, ECHO 34/35/32/33 · Rail 0/41/85/130mm · Sources: Espressif DevKitC V4 sch + WROOM-32 ds, HC-SR04 datasheets (electronicoscaldas/electroschematics/handsontec). Hover any pin for function.</p>
+</header>
+<nav>
+<button data-t="t1" class="active">1 · System</button>
+<button data-t="t2">2 · Wiring</button>
+<button data-t="t3">3 · Acoustic modes + focus</button>
+<button data-t="t4">4 · Contact probe (curves)</button>
+<button data-t="t5">5 · Software / report</button>
+</nav>
+<main>
+<!-- TAB 1 -->
+<section id="t1" class="tab active"><div class="card">
+<h2>1 · System block — Reflector + Scatter</h2>
+<svg viewBox="0 0 900 340" role="img" aria-label="system block">
+<rect class="box" x="10" y="20" width="200" height="120" rx="10"/><text class="lbl" x="24" y="48">Linear array 4× HC-SR04</text><text class="mut" x="24" y="68">0/41/85/130mm · 40kHz</text><text class="mut" x="24" y="86">CAL seq · FLOOD 1Tx/4Rx</text><text class="mut" x="24" y="104">FOCUS phased spherical</text><text class="mut" x="24" y="122">ROI navigator (cm)</text>
+<rect class="box" x="10" y="160" width="200" height="110" rx="10"/><text class="lbl" x="24" y="188">Contact piezo head</text><text class="mut" x="24" y="208">pitch-catch · silicone pad</text><text class="mut" x="24" y="226">spring gimbal · rock ±15°</text><text class="mut" x="24" y="244">curves ≥25mm dia</text>
+<rect class="box" x="10" y="282" width="200" height="44" rx="10"/><text class="mut" x="24" y="308">Lens (USB scope) = ground-truth labeler only</text>
+<rect class="chip" x="250" y="60" width="200" height="170" rx="10"/><text class="lbl" x="264" y="88">ESP32 DevKitC V4</text><text class="pin" x="264" y="108"><title>GPIO25/26/27/14 outputs drive TRIG0-3 (10µs). GPIO34/35/32/33 input-only read ECHO via divider.</title>TRIG 25/26/27/14 → • ECHO 34/35/32/33 →</text><text class="mut" x="264" y="128">RMT delays · 60ms guard</text><text class="mut" x="264" y="146">c=331.4+0.6T · DS18B20</text><text class="mut" x="264" y="164">Serial 115200 CSV / WiFi</text><text class="mut" x="264" y="182">5V sensors · 3V3 logic</text><text class="mut" x="264" y="202">CMD: CAL FLOOD FOCUS</text>
+<rect class="box" x="490" y="20" width="190" height="120" rx="10"/><text class="lbl" x="504" y="48">Reflector pipeline</text><text class="mut" x="504" y="68">nC2 cosine trilateration</text><text class="mut" x="504" y="86">weighted fuse → X,Y,conf</text><text class="mut" x="504" y="104">occupancy 5cm · beam map</text>
+<rect class="box" x="490" y="160" width="190" height="110" rx="10"/><text class="lbl" x="504" y="188">Scatter pipeline</text><text class="mut" x="504" y="208">A_drop dB · width · A2/A1</text><text class="mut" x="504" y="226">Ra/Rz · Q-drop · jitter</text><text class="mut" x="504" y="244">→ cloud_index 0-100</text>
+<rect class="box" x="710" y="60" width="180" height="170" rx="10"/><text class="lbl" x="724" y="88">fuse_report.py</text><text class="mut" x="724" y="108">material-cal normalize</text><text class="mut" x="724" y="126">report.json:</text><text class="mut" x="724" y="144">X,Y · reflector_flag</text><text class="mut" x="724" y="162">cloud_index · risk</text><text class="mut" x="724" y="180">OK/WATCH/HIGH</text>
+<line class="wire" x1="210" y1="80" x2="250" y2="110"/><line class="wire" x1="210" y1="210" x2="250" y2="170"/>
+<line class="wire" x1="450" y1="120" x2="490" y2="80"/><line class="wire" x1="450" y1="170" x2="490" y2="210"/>
+<line class="wire" x1="680" y1="120" x2="710" y2="140"/>
+<text class="mut" x="250" y="258">HTHA lesson: reflector-clean ≠ healthy — scatter channel catches pre-crack cloud.</text>
+</svg>
+<p class="foot">Claim cap: idea of cracks ≥3–5mm open + cloud zone. No micron claim with 40kHz air. Variant box: 30-pin clones reorder pins — verify GND/5V/34-39 before power; 3.3V-tolerant HC-SR04 (Handsontec) may omit divider but keep it for classic boards.</p>
+</div></section>
+<!-- TAB 2 -->
+<section id="t2" class="tab"><div class="card">
+<h2>2 · Wiring — pin-accurate (hover for function)</h2>
+<svg viewBox="0 0 920 420" role="img" aria-label="wiring">
+<!-- ESP32 -->
+<rect class="chip" x="20" y="30" width="240" height="360" rx="10"/>
+<text class="lbl" x="34" y="56">ESP32-DevKitC V4 (38-pin)</text>
+<text class="pin" x="34" y="80"><title>J2-9 GPIO25 output → TRIG0 via 330Ω guard. DAC-capable, safe.</title>● IO25 → TRIG0</text>
+<text class="pin" x="34" y="100"><title>J2-10 GPIO26 output → TRIG1.</title>● IO26 → TRIG1</text>
+<text class="pin" x="34" y="120"><title>J2-11 GPIO27 output → TRIG2.</title>● IO27 → TRIG2</text>
+<text class="pin" x="34" y="140"><title>J2-12 GPIO14 output → TRIG3. Boot-safe (no strapping conflict as output-low at reset).</title>● IO14 → TRIG3</text>
+<text class="pin" x="34" y="168"><title>J2-5 GPIO34 input-only ADC1_CH6. 5V Echo MUST come via 1k/2k divider → 3.33V. No output driver, no pullup.</title>● IO34 ← ECHO0 ÷</text>
+<text class="pin" x="34" y="188"><title>J2-6 GPIO35 input-only ADC1_CH7, same divider.</title>● IO35 ← ECHO1 ÷</text>
+<text class="pin" x="34" y="208"><title>J2-7 GPIO32 input → ECHO2 via divider (32 is I/O, used as input).</title>● IO32 ← ECHO2 ÷</text>
+<text class="pin" x="34" y="228"><title>J2-8 GPIO33 input → ECHO3 via divider.</title>● IO33 ← ECHO3 ÷</text>
+<text class="mut" x="34" y="256">5V (J2-19) → sensors Vcc ★</text>
+<text class="mut" x="34" y="274">GND (J2-14/J3-1) ★ star</text>
+<text class="mut" x="34" y="292">3V3 (J2-1) → DS18B20 + PU</text>
+<text class="mut" x="34" y="310">EN/BOOT + USB-UART per Espressif ref</text>
+<text class="mut" x="34" y="328">100nF+10µF at 3V3 (ref des)</text>
+<text class="mut" x="34" y="350">FW: TRIG {25,26,27,14} ECHO {34,35,32,33}</text>
+<!-- sensors -->
+<rect class="box" x="330" y="30" width="560" height="360" rx="10"/>
+<text class="lbl" x="344" y="56">4× HC-SR04 classic 5V (Vcc Trig Echo GND, 45×20×15mm)</text>
+<!-- draw 4 modules -->
+<g font-family="monospace" font-size="11">
+<rect class="box" x="344" y="70" width="530" height="66" rx="8"/><text class="lbl" x="356" y="94">S0 @0mm — Vcc 5V · Trig←IO25 · Echo→[1k→2k→GND]→IO34 · GND★</text><text class="mut" x="356" y="114">8×40kHz burst on 10µs Trig · Echo PWM us/58=cm · 60ms cycle</text>
+<rect class="box" x="344" y="144" width="530" height="66" rx="8"/><text class="lbl" x="356" y="168">S1 @41mm — Vcc 5V · Trig←IO26 · Echo→[1k→2k→GND]→IO35 · GND★</text><text class="mut" x="356" y="188">divider: 5V×2k/3k=3.33V · 1% 1/4W</text>
+<rect class="box" x="344" y="218" width="530" height="66" rx="8"/><text class="lbl" x="356" y="242">S2 @85mm — Vcc 5V · Trig←IO27 · Echo→[1k→2k→GND]→IO32 · GND★</text><text class="mut" x="356" y="262">positions match POS[] in firmware</text>
+<rect class="box" x="344" y="292" width="530" height="66" rx="8"/><text class="lbl" x="356" y="316">S3 @130mm — Vcc 5V · Trig←IO14 · Echo→[1k→2k→GND]→IO33 · GND★</text><text class="mut" x="356" y="336">DS18B20 DQ→GPIO15 + 4.7k→3V3 (temp comp)</text>
+</g>
+<line class="wire" x1="260" y1="80" x2="344" y2="90"/><line class="wire" x1="260" y1="100" x2="344" y2="160"/>
+<line class="wire" x1="260" y1="120" x2="344" y2="235"/><line class="wire" x1="260" y1="140" x2="344" y2="310"/>
+<line class="wire" x1="260" y1="168" x2="344" y2="100"/><line class="wire" x1="260" y1="188" x2="344" y2="170"/>
+<line class="wire" x1="260" y1="208" x2="344" y2="245"/><line class="wire" x1="260" y1="228" x2="344" y2="320"/>
+</svg>
+<table><tr><th>Net</th><th>From → To</th><th>Value / note</th></tr>
+<tr><td>TRIG0-3</td><td>IO25/26/27/14 → HC-SR04 Trig</td><td>10µs pulse, 8-cycle 40kHz burst, +330Ω guard opt</td></tr>
+<tr><td>ECHO0-3</td><td>HC-SR04 Echo → 1k → GPIO + 2k→GND</td><td>3.33V tap, never 5V direct to ESP32</td></tr>
+<tr><td>Power</td><td>5V 2A → Vcc ×4 + ESP32 5V; GND star</td><td>15mA/sensor + ESP32; 100nF+10µF at 3V3</td></tr>
+<tr><td>Temp</td><td>DS18B20 DQ → GPIO15, 4.7k→3V3</td><td>c=331.4+0.6T for TOF</td></tr></table>
+<p class="foot">Sources: dl.espressif.com DevKitC V4 sch; docs.espressif J2/J3 tables; HC-SR04 electronicoscaldas/electroschematics/handsontec datasheets. Clone warning: verify 5V/GND positions with DMM before first power.</p>
+</div></section>
+<!-- TAB 3 -->
+<section id="t3" class="tab"><div class="card">
+<h2>3 · Acoustic modes — drag focus, live delays</h2>
+<p>Xf <input id="xf" type="range" min="0" max="130" value="65"> <b id="xfv">65</b>mm ·
+Zf <input id="zf" type="range" min="100" max="600" value="300"> <b id="zfv">300</b>mm ·
+Mode <select id="mode"><option value="flood">Flood 1Tx/4Rx</option><option value="seq">Sequential CAL</option><option value="focus" selected>Phased focus</option></select></p>
+<svg id="ac" viewBox="0 0 900 360" role="img" aria-label="array top view">
+<line x1="40" y1="300" x2="860" y2="300" stroke="#2b3a55"/>
+<text class="mut" x="40" y="325">rail 0 … 130mm (S0 S1 S2 S3 at 0/41/85/130)</text>
+<g id="sens"></g><g id="waves"></g>
+<circle id="tgt" r="8" fill="#ffb454"><title>Focal / target point</title></circle>
+<text id="tgtlbl" class="lbl" x="0" y="0"></text>
+<text class="mut" x="40" y="40">λ=8.6mm · 30° cone per element · blind &lt;20mm · sidelobes expected (spacing≫λ/2)</text>
+</svg>
+<table><tr><th>Element</th><th>dist mm</th><th>delay µs (outer-first)</th><th>phase rad</th></tr><tbody id="dtab"></tbody></table>
+<p class="foot">Formula: dist=√((Xm−Xf)²+Zf²), delay=(max−dist)/c, φ=−2π·dist/λ. Matches <code>focus_law.py</code> + firmware <code>doFocus()</code>.</p>
+</div></section>
+<!-- TAB 4 -->
+<section id="t4" class="tab"><div class="card">
+<h2>4 · Compliant contact probe — for curves ≥25mm dia</h2>
+<svg viewBox="0 0 900 340" role="img" aria-label="contact section">
+<path d="M100 260 Q450 180 800 260 L800 300 Q450 220 100 300 Z" fill="#141d31" stroke="#2b3a55"/>
+<text class="mut" x="110" y="250">curved steel / glass (R≥25mm)</text>
+<rect class="box" x="380" y="60" width="140" height="40" rx="8"/><text class="lbl" x="392" y="84">piezo Tx 1MHz</text>
+<rect class="box" x="540" y="60" width="140" height="40" rx="8"/><text class="lbl" x="552" y="84">piezo Rx / PVDF</text>
+<rect class="box" x="400" y="110" width="260" height="60" rx="10"/><text class="lbl" x="414" y="134">silicone pad 10-15mm</text><text class="mut" x="414" y="152">dry couplant + honey film</text>
+<rect class="box" x="430" y="180" width="200" height="34" rx="8"/><text class="mut" x="444" y="202">spring gimbal ~200g · FSR</text>
+<line class="wire" x1="450" y1="100" x2="420" y2="220"/><line class="wire" x1="610" y1="100" x2="640" y2="220"/>
+<line class="wire" x1="420" y1="220" x2="640" y2="220"/>
+<text class="mut" x="400" y="248">pitch-catch surface path → crack drops A · rock ±15° pick max A0 · reject if coupling&lt;thr</text>
+<text class="mut" x="60" y="40">Glass: 2-3 cycle burst, lower drive (long ring). Metal: 5-cycle + AD9833.</text>
+</svg>
+<p class="foot">Poor-man's roller tyre (cf. Tunukovic26): silicone conforms, spring holds pressure, rock-sweep finds coupling angle. Log angle+pressure+temp per shot.</p>
+</div></section>
+<!-- TAB 5 -->
+<section id="t5" class="tab"><div class="card">
+<h2>5 · Software / report — Cantilever-lite</h2>
+<svg viewBox="0 0 900 220" role="img" aria-label="dataflow">
+<rect class="box" x="10" y="30" width="150" height="120" rx="10"/><text class="lbl" x="24" y="58">ESP32 CSV</text><text class="mut" x="24" y="78">t,T,d[4]</text><text class="mut" x="24" y="96">peak,width</text><text class="mut" x="24" y="114">echo2,noise</text>
+<rect class="box" x="190" y="30" width="160" height="120" rx="10"/><text class="lbl" x="204" y="58">reflector.py</text><text class="mut" x="204" y="78">nC2 fuse</text><text class="mut" x="204" y="96">X,Y,conf</text>
+<rect class="box" x="380" y="30" width="160" height="120" rx="10"/><text class="lbl" x="394" y="58">scatter_metric</text><text class="mut" x="394" y="78">A_drop dB</text><text class="mut" x="394" y="96">cloud 0-100</text>
+<rect class="box" x="570" y="30" width="140" height="120" rx="10"/><text class="lbl" x="584" y="58">material_cal</text><text class="mut" x="584" y="78">A0,Ra0</text><text class="mut" x="584" y="96">z-score</text>
+<rect class="box" x="740" y="30" width="150" height="120" rx="10"/><text class="lbl" x="754" y="58">report.json</text><text class="mut" x="754" y="78">reflector_flag</text><text class="mut" x="754" y="96">risk OK/W/H</text>
+</svg>
+<table><tr><th>Example (verified run)</th><th>Value</th></tr>
+<tr><td>position</td><td><code>X 18.4 Y 301.9 conf 0.56</code></td></tr>
+<tr><td>scatter</td><td><code>A_drop −9.5dB width×1.4 cloud 52.2</code></td></tr>
+<tr><td>focus @ Xf65 Zf300</td><td><code>delays 0 / 17.5 / 18.4 / 0 µs</code></td></tr>
+<tr><td>risk</td><td><code>HIGH (reflector true)</code></td></tr></table>
+<p class="foot">Files: fw/esp32_array.ino · python/{reflector,scatter_metric,focus_law,contact_acquire,material_cal,fuse_report}.py · app/streamlit_app.py · materials.json</p>
+</div></section>
+</main>
+<script>
+const tabs=[...document.querySelectorAll('nav button')];
+tabs.forEach(b=>b.onclick=()=>{tabs.forEach(x=>x.classList.remove('active'));b.classList.add('active');
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(b.dataset.t).classList.add('active');});
+// Tab3 live focus
+const POS=[0,41,85,130], LAM=8.6, C=0.343;
+const sens=document.getElementById('sens'),waves=document.getElementById('waves');
+POS.forEach((x,i)=>{const sx=60+x*5.6;const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+g.innerHTML=`<rect x="${sx-22}" y="282" width="44" height="18" rx="4" fill="#10182b" stroke="#5cc8ff"><title>S${i} @${x}mm — TRIG ${[25,26,27,14][i]} / ECHO ${[34,35,32,33][i]}</title></rect><text x="${sx-8}" y="295" font-size="11" fill="#5cc8ff">S${i}</text>`;sens.appendChild(g);});
+function upd(){const Xf=+document.getElementById('xf').value,Zf=+document.getElementById('zf').value;
+document.getElementById('xfv').textContent=Xf;document.getElementById('zfv').textContent=Zf;
+const mode=document.getElementById('mode').value;
+const dists=POS.map(x=>Math.hypot(x-Xf,Zf)),mx=Math.max(...dists);
+const rows=dists.map((d,i)=>{const dl=(mx-d)/C,ph=((-2*Math.PI*d/LAM)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);return {i,d,dl,ph};});
+document.getElementById('dtab').innerHTML=rows.map(r=>`<tr><td>S${r.i} @${POS[r.i]}mm</td><td>${r.d.toFixed(1)}</td><td>${mode==='focus'?r.dl.toFixed(1):mode==='flood'?'0 (Tx0 only)':'seq'}</td><td>${r.ph.toFixed(2)}</td></tr>`).join('');
+const tx=60+Xf*5.6,ty=300-Zf*0.55;const tgt=document.getElementById('tgt');tgt.setAttribute('cx',tx);tgt.setAttribute('cy',ty);
+const l=document.getElementById('tgtlbl');l.setAttribute('x',tx+12);l.setAttribute('y',ty+4);l.textContent=`(${Xf},${Zf})`;
+waves.innerHTML='';const n=mode==='focus'?4:1;
+for(let k=0;k<n;k++){const sx=60+POS[mode==='focus'?k:0]*5.6;
+for(let r=1;r<=3;r++){const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+c.setAttribute('cx',sx);c.setAttribute('cy',282);c.setAttribute('r',r*22);c.setAttribute('fill','none');
+c.setAttribute('stroke',mode==='focus'?'#5cc8ff':'#ffb454');c.setAttribute('opacity',0.55-0.12*r);waves.appendChild(c);}}}
+['xf','zf','mode'].forEach(id=>document.getElementById(id).oninput=upd);upd();
+</script>
+</body>
+</html>
