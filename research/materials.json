@@ -1,0 +1,7 @@
+{
+  "_note": "10s auto-cal fingerprint per material. Add new material with 4 coupons, no code change.",
+  "mild-steel": {"v_contact_m_s": 5900, "ut_freq_kHz": 1000, "skin_note": "ferrous high-mu, use 500kHz-1MHz EC", "A0_ref": null, "Ra0": null},
+  "al-6061": {"v_contact_m_s": 6320, "ut_freq_kHz": 500, "skin_note": "non-ferrous, 100-500kHz EC", "A0_ref": null, "Ra0": null},
+  "soda-glass": {"v_contact_m_s": 4540, "ut_freq_kHz": null, "skin_note": "transparent, optical primary, short burst 2-3cyc", "A0_ref": null, "Ra0": null},
+  "acrylic": {"v_contact_m_s": 2730, "ut_freq_kHz": null, "skin_note": "control, high attenuation", "A0_ref": null, "Ra0": null}
+}

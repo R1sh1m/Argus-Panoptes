@@ -1,0 +1,13 @@
+coupon_id,material,condition,size_mm,notes,reflector_expect,scatter_expect
+M1,mild-steel,good-polished,100x100,baseline null,none,cloud~0
+M2,mild-steel,cloudy-sandblasted,100x100,HTHA proxy,none,cloud high
+M3a,mild-steel,notch-1mm,100x100,dye truth,weak,medium
+M3b,mild-steel,notch-2mm,100x100,dye truth,yes,medium
+M3c,mild-steel,notch-5mm,100x100,dye truth,yes,medium
+M4,mild-steel,fatigue-bent,100x100,pre-crack haze,none,cloud high
+A1,al-6061,good,100x100,baseline,none,cloud~0
+A3,al-6061,notch-2mm,100x100,dye truth,yes,medium
+G1,soda-glass,intact,75x25 slide,baseline,none,cloud~0
+G2,soda-glass,scored-5mm,75x25 slide,visible crack,yes,medium
+G3,soda-glass,star-crack,75x25 slide,damped ring,weak,cloud high
+C0,acrylic,control-good,100x100,control,none,cloud~0
