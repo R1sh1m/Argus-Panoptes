@@ -29,5 +29,12 @@
 - Hackster 5x HC-SR04 array + 2D triangulation (cosine rule, nC2 weighted fuse)
 - IJARCCE/IJERT ultrasonic IPS (TDOA multilateration, grid matrix)
 
+## 05_multimodal-radar-lidar-imu/ - Mark-II Probe Architecture
+| File / Key | Paper | License | Derive for Argus |
+|---|---|---|---|
+| Gao2020-mmWave-Composite.url | Gao et al. IEEE T-THZ 2020 | IEEE Citation | 60/77GHz FMCW penetration, delamination & void detection in GFRP |
+| Zeng2022-Multimodal-LiDAR-Radar.url | Zeng et al. IEEE Sensors J 2022 | IEEE Citation | Surface echo clutter gating via 850nm ToF LiDAR, >14dB SCR boost |
+| Stanko2021-IMU-Handheld-SAR.url | Stanko et al. NDTEI 2021 | Elsevier Citation | Freehand scanning SAR motion compensation using 9-DoF orientation quaternions |
+
 ## Copyright rule
 Open/CC-BY/arXiv/NDT.net-open only in git. Paywalled IEEE -> citation, no PDF.

@@ -1,0 +1,51 @@
+#!/bin/sh
+# Argus-Panoptes pre-commit guard (Mac + Windows Git Bash).
+# Blocks junk files always; WARNS (does not block) on large files because
+# research/ PDFs up to ~26MB are legitimately tracked.
+#
+# Blocked: __pycache__/, *.pyc/*.pyo, .venv/, venv/, .DS_Store, *.log, report.json
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACM)
+[ -z "$STAGED" ] && exit 0
+
+BLOCKED=""
+WARN_BIG=""
+
+echo "$STAGED" | while IFS= read -r f; do
+  case "$f" in
+    *__pycache__*|*.pyc|*.pyo|.venv/*|venv/*|.DS_Store|*.log|report.json)
+      echo "BLOCKED junk file: $f"
+      echo "$f" >> /tmp/argus_hook_blocked 2>/dev/null || true
+      ;;
+  esac
+done
+
+# collect blocked via temp check (subshell-safe): re-scan simply
+for f in $STAGED; do
+  case "$f" in
+    *__pycache__*|*.pyc|*.pyo|.venv/*|venv/*|.DS_Store|*.log|report.json)
+      BLOCKED="$BLOCKED $f" ;;
+  esac
+done
+
+if [ -n "$BLOCKED" ]; then
+  echo "pre-commit BLOCKED — unstage these junk files:"
+  for f in $BLOCKED; do echo "  $f"; done
+  echo 'Fix: git reset HEAD -- <file>  (and keep them gitignored)'
+  exit 1
+fi
+
+# Size warning only (>10MB staged new content)
+for f in $STAGED; do
+  if [ -f "$f" ]; then
+    # wc -c is portable (Mac + GNU)
+    SIZE=$(wc -c < "$f" 2>/dev/null | tr -d ' ')
+    case "$SIZE" in ''|*[!0-9]*) continue;; esac
+    if [ "$SIZE" -gt 10485760 ]; then
+      MB=$(awk "BEGIN {printf \"%.1f\", $SIZE/1048576}")
+      echo "WARNING: large file ${MB}MB: $f (allowed, just confirming it's intentional)"
+    fi
+  fi
+done
+
+exit 0

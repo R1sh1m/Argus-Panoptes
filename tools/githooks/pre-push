@@ -1,0 +1,19 @@
+#!/bin/sh
+# Argus-Panoptes pre-push guard (Mac + Windows Git Bash).
+# Blocks `git push` when local main is BEHIND origin/main,
+# so teammates must run `python tools/sync.py start` first
+# instead of creating a diverged/rejected push.
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+[ "$BRANCH" != "main" ] && exit 0  # only guard the shared branch
+
+git fetch origin --prune --quiet 2>/dev/null || exit 0  # offline: don't block
+
+BEHIND=$(git rev-list --count HEAD..origin/main 2>/dev/null) || exit 0
+if [ -n "$BEHIND" ] && [ "$BEHIND" -gt 0 ]; then
+  echo "pre-push BLOCKED — you are BEHIND origin/main by $BEHIND commit(s)."
+  echo "Run first:  python tools/sync.py start"
+  echo "Then push again with:  python tools/sync.py end"
+  exit 1
+fi
+exit 0

@@ -6,7 +6,11 @@ ESP32 + 4x HC-SR04 linear array (flood-first, phased-focus second) + compliant
 contact piezo + material-adaptive AI -> Reflector + Scatter dual pipeline.
 
 ### Structure
+- `docs/` - system specs, schematics, and budgeting
+  - `PROBE_BOM_COST_AND_USABILITY.md` - Bill of Materials, Indian vendor costs (INR), and usability scope
+  - `schematics/` - hardware schematics and pin contracts
 - `research/` - study material, R&D notes, coupon logs, material library
+  - `multimodal-probe-architecture.md` - Mark-II FMCW mmWave + ToF LiDAR + IMU fusion probe specification
 - `code/fw/esp32_array/` - ESP32 firmware (Mode0 cal, Mode1 flood, Mode2 phased)
 - `code/python/` - reflector, scatter, focus law, contact, material cal, fuse report
 - `code/app/` - Streamlit dashboard (Cantilever-lite)
